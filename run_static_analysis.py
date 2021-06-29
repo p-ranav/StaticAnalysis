@@ -96,7 +96,7 @@ def create_comment_for_output(tool_output, prefix, files_changed_in_pr):
     global current_comment_length
     output_string = ''
     for line in tool_output:
-        if line.startswith(prefix):
+        if any(category in line for category in ["performance:", "error:", "style:", "warning:", "portability:", "information:"]):
             line = line.replace(prefix, "")
             file_path_end_idx = line.index(':')
             file_path = line[:file_path_end_idx]
