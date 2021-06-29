@@ -16,8 +16,8 @@ if [ -n "$INPUT_INIT_SCRIPT" ]; then
     source $INPUT_INIT_SCRIPT
 fi
 
-mkdir build && cd build || exit
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$INPUT_CMAKE_ARGS" ..
+# mkdir build && cd build || exit
+# cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$INPUT_CMAKE_ARGS" ..
 
 if [ -z "$INPUT_EXCLUDE_DIR" ]; then
     eval cppcheck --project=compile_commands.json "$INPUT_CPPCHECK_ARGS" --output-file=cppcheck.txt
