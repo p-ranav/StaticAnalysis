@@ -200,7 +200,20 @@ if __name__ == "__main__":
     
     categories = ["error:", "warning:", "portability", "performance:", "style:", "information:"]
     
+    num_cppcheck_issues_found_in_each_category = []
+    comment_body_in_each_category = []
+    
     for category in categories:
         cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found = read_files_and_parse_results(files_changed_in_pr, category)
         comment_body = prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found, category)
-        create_or_edit_comment(comment_body)
+        num_cppcheck_issues_found_in_each_category.append(cppcheck_issues_found)
+        comment_body_in_each_category.append(comment_body)
+        
+    if all(v == 0 for v in num_cppcheck_issues_found_in_each_category):
+        # No issues in any category
+        create_or_edit_comment(comment_body_in_each_category[0])
+    else:
+        for i in range(len(categories)):
+            comment_body = comment_body_in_each_category[i]
+            if num_cppcheck_issues_found_in_each_category[i] > 0:
+                create_or_edit_comment(comment_body)
