@@ -95,12 +95,12 @@ def get_file_line_end(file, file_line_start):
     except:
         return file_line_start + 5
 
-def create_comment_for_output(tool_output, prefix, files_changed_in_pr):
+def create_comment_for_output(tool_output, prefix, files_changed_in_pr, category):
     issues_found = 0
     global current_comment_length
     output_string = ''
     for line in tool_output:
-        if any(category in line for category in ["performance:", "error:", "style:", "warning:", "portability:", "information:"]):
+        if category in line:
             line = line.replace(prefix, "")
             file_path_end_idx = line.index(':')
             file_path = line[:file_path_end_idx]
@@ -122,7 +122,7 @@ def create_comment_for_output(tool_output, prefix, files_changed_in_pr):
 
     return output_string, issues_found
 
-def read_files_and_parse_results(files_changed_in_pr):
+def read_files_and_parse_results(files_changed_in_pr, category):
     # Get cppcheck and clang-tidy files
     parser = argparse.ArgumentParser()
     parser.add_argument('-cc', '--cppcheck', help='Output file name for cppcheck', required=True)
@@ -140,12 +140,28 @@ def read_files_and_parse_results(files_changed_in_pr):
 
     line_prefix = f'{WORK_DIR}'
 
-    cppcheck_comment, cppcheck_issues_found = create_comment_for_output(cppcheck_content, line_prefix, files_changed_in_pr)
-    clang_tidy_comment, clang_tidy_issues_found = create_comment_for_output(clang_tidy_content, line_prefix, files_changed_in_pr)
+    cppcheck_comment, cppcheck_issues_found = create_comment_for_output(cppcheck_content, line_prefix, files_changed_in_pr, category)
+    clang_tidy_comment, clang_tidy_issues_found = create_comment_for_output(clang_tidy_content, line_prefix, files_changed_in_pr, category)
 
     return cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found
 
-def prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found):
+def prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found, category):
+    
+    category_header_map = {
+        "error:": "error",
+        "warning:": "warning",
+        "portability:": "portability issue",
+        "performance": "performance issue",
+        "style:": "style issue",
+        "information:":, "information issue"
+    }
+
+    category_text = "issues"
+    if category in category_header_map:
+        if cppcheck_issues_found > 1:
+            category_text = category_header_map[category] + "s" # plural
+        else:
+            category_text = category_header_map[category]
 
     if cppcheck_issues_found == 0 and clang_tidy_issues_found == 0:
         full_comment_body = f'## <p align="center"><b> :white_check_mark: {COMMENT_TITLE} - no issues found! :white_check_mark: </b></p>'
@@ -154,7 +170,7 @@ def prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_f
 
         if len(cppcheck_comment) > 0:
             full_comment_body +=f'<details> <summary> <b> :red_circle: Cppcheck found'\
-            f' {cppcheck_issues_found} {"issues" if cppcheck_issues_found > 1 else "issue"}! Click here to see details. </b> </summary> <br>'\
+            f' {cppcheck_issues_found} {category_text}! Click here to see details. </b> </summary> <br>'\
             f'{cppcheck_comment} </details>'
 
         full_comment_body += "\n\n *** \n"
@@ -193,6 +209,10 @@ def create_or_edit_comment(comment_body):
 
 if __name__ == "__main__":
     files_changed_in_pr = setup_changed_files()
-    cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found = read_files_and_parse_results(files_changed_in_pr)
-    comment_body = prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found)
-    create_or_edit_comment(comment_body)
+    
+    categories = ["error:", "warning:", "portability", "performance:", "style:", "information:"]
+    
+    for category in categories:
+        cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found = read_files_and_parse_results(files_changed_in_pr, category)
+        comment_body = prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_found, clang_tidy_issues_found, category)
+        create_or_edit_comment(comment_body)
