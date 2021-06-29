@@ -153,7 +153,7 @@ def prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_f
         "portability:": "portability issue",
         "performance": "performance issue",
         "style:": "style issue",
-        "information:":, "information issue"
+        "information:": "information issue"
     }
 
     category_text = "issues"
