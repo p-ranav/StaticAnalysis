@@ -42,7 +42,7 @@ jobs:
         apt install -y libvulkan1 mesa-vulkan-drivers vulkan-utils" > init_script.sh
 
     - name: Run static analysis
-      uses: JacobDomagala/StaticAnalysis@master
+      uses: appliedinnovation/StaticAnalysis@master
       with:
         # Exclude any issues found in ${Project_root_dir}/lib
         exclude_dir: lib
