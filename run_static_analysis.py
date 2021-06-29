@@ -192,20 +192,8 @@ def create_or_edit_comment(comment_body):
     repo = g.get_repo(REPO_NAME)
     pr = repo.get_pull(PR_NUM)
 
-    comments = pr.get_issue_comments()
-    found_id = -1
-    comment_to_edit = None
-    for comment in comments:
-        if (comment.user.login == 'github-actions[bot]') and (COMMENT_TITLE in comment.body):
-            found_id = comment.id
-            comment_to_edit = comment
-            break
-
-    if found_id != -1:
-        comment_to_edit.edit(body = comment_body)
-    else:
-        pr.create_issue_comment(body = comment_body)
-
+    # Create a new comment
+    pr.create_issue_comment(body = comment_body)
 
 if __name__ == "__main__":
     files_changed_in_pr = setup_changed_files()
