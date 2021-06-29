@@ -151,7 +151,7 @@ def prepare_comment_body(cppcheck_comment, clang_tidy_comment, cppcheck_issues_f
         "error:": "error",
         "warning:": "warning",
         "portability:": "portability issue",
-        "performance": "performance issue",
+        "performance:": "performance issue",
         "style:": "style issue",
         "information:": "information issue"
     }
