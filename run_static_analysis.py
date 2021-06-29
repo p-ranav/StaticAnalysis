@@ -105,7 +105,7 @@ def create_comment_for_output(tool_output, prefix, files_changed_in_pr):
             file_line_end = get_file_line_end(file_path, file_line_start)
             description = f"\n```diff\n!Line: {file_line_start} - {line[line.index(' ')+1:]}``` \n"
 
-            new_line = f'\n\nhttps://github.com/{REPO_NAME}/blob/{SHA}{file_path}#L{file_line_start}-L{file_line_end} {description} <br>\n'
+            new_line = f'\n\nhttps://github.com/{REPO_NAME}/blob/{SHA}/{file_path}#L{file_line_start}-L{file_line_end} {description} <br>\n'
 
             if is_part_of_pr_changes(file_path, file_line_start, files_changed_in_pr):
                 if check_for_char_limit(new_line):
