@@ -198,7 +198,7 @@ def create_or_edit_comment(comment_body):
 if __name__ == "__main__":
     files_changed_in_pr = setup_changed_files()
     
-    categories = ["error:", "warning:", "portability", "performance:", "style:", "information:"]
+    categories = ["error:", "warning:", "portability:", "performance:", "style:", "information:"]
     
     num_cppcheck_issues_found_in_each_category = []
     comment_body_in_each_category = []
