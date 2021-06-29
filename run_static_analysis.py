@@ -88,7 +88,7 @@ def check_for_char_limit(incoming_line):
     return (current_comment_length + len(incoming_line)) <= COMMENT_MAX_SIZE
 
 def get_file_line_end(file, file_line_start):
-    num_lines = sum(1 for line in open(WORK_DIR + file))
+    num_lines = sum(1 for line in open(WORK_DIR + "/" + file))
     return min(file_line_start + 5, num_lines)
 
 def create_comment_for_output(tool_output, prefix, files_changed_in_pr):
