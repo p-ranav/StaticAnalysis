@@ -20,10 +20,10 @@ fi
 # cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$INPUT_CMAKE_ARGS" ..
 
 if [ -z "$INPUT_EXCLUDE_DIR" ]; then
-    eval cppcheck "$INPUT_CPPCHECK_ARGS" --output-file=cppcheck.txt .
+    eval cppcheck --language=c++ "$INPUT_CPPCHECK_ARGS" --output-file=cppcheck.txt .
     run-clang-tidy-12 -- >(tee "clang_tidy.txt")
 else
-    eval cppcheck "$INPUT_CPPCHECK_ARGS" --output-file=cppcheck.txt  -i"$GITHUB_WORKSPACE/$INPUT_EXCLUDE_DIR" .
+    eval cppcheck --language=c++ "$INPUT_CPPCHECK_ARGS" --output-file=cppcheck.txt  -i"$GITHUB_WORKSPACE/$INPUT_EXCLUDE_DIR" .
     run-clang-tidy-12 "^((?!$GITHUB_WORKSPACE/$INPUT_EXCLUDE_DIR).)*$" -- > clang_tidy.txt
 fi
 
