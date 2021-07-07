@@ -43,21 +43,24 @@ def get_lines_changed_from_patch(patch):
         # Example line @@ -43,6 +48,8 @@
         # ------------ ^
         if line.startswith("@@"):
-            # Example line @@ -43,6 +48,8 @@
-            # ----------------------^
-            idx_beg = line.index("+")
+            try:
+                # Example line @@ -43,6 +48,8 @@
+                # ----------------------^
+                idx_beg = line.index("+")
 
-            # Example line @@ -43,6 +48,8 @@
-            #                       ^--^
-            idx_end = line[idx_beg:].index(",")
-            line_begin = int(line[idx_beg + 1 : idx_beg + idx_end])
+                # Example line @@ -43,6 +48,8 @@
+                #                       ^--^
+                idx_end = line[idx_beg:].index(",")
+                line_begin = int(line[idx_beg + 1 : idx_beg + idx_end])
 
-            idx_beg = idx_beg + idx_end
-            idx_end = line[idx_beg + 1 : ].index("@@")
+                idx_beg = idx_beg + idx_end
+                idx_end = line[idx_beg + 1 : ].index("@@")
 
-            num_lines = int(line[idx_beg + 1 : idx_beg + idx_end])
+                num_lines = int(line[idx_beg + 1 : idx_beg + idx_end])
 
-            lines_changed.append((line_begin, line_begin + num_lines))
+                lines_changed.append((line_begin, line_begin + num_lines))
+            except ValueError:
+                pass
 
     return lines_changed
 
